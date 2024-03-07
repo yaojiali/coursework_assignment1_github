@@ -4,6 +4,7 @@ library(caretEnsemble)
 library(gbm)
 library(pROC)
 library(glue)
+library(ggpubr)
 
 load("0_rda/1.1_pre-filter_center_scaled_imputed training and testing dataset_48predictors.rda")
 # test_imp 
@@ -21,8 +22,12 @@ names(model_list) <- modelnames
 
 #---------------------------------------------
 # performance of final models by algorithms in the training data
-model_list %>% resamples %>% summary
-model_list %>% resamples %>% dotplot(main = "Model performance by each algorithm for the training dataset")
+rs <- model_list %>% resamples
+rs %>% summary
+p1 <- ggplot(a, metric = "ROC") + theme_bw() + labs(y = "AUROC")
+p2 <- ggplot(a, metric = "Sens") + theme_bw() + labs(y = "Sensitivity")
+p3 <- ggplot(a, metric = "Spec") + theme_bw() + labs(y = "Specificity")
+ggarrange(p1, p2, p3, nrow = 2, ncol = 2)
 
 #---------------------------------------------
 # Feature importance
